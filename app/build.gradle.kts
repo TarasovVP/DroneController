@@ -1,0 +1,63 @@
+import com.android.build.api.dsl.Packaging
+
+plugins {
+    id("com.android.application")
+}
+
+android {
+    namespace = "com.vnteam.dronecontroller"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.vnteam.dronecontroller"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    packaging {
+        jniLibs.keepDebugSymbols.add("*/libdjivideo.so")
+        jniLibs.keepDebugSymbols.add("*/libSDKRelativeJNI.so")
+        jniLibs.keepDebugSymbols.add("*/libFlyForbid.so")
+        jniLibs.keepDebugSymbols.add("*/libduml_vision_bokeh.so")
+        jniLibs.keepDebugSymbols.add("*/libyuv2.so")
+        jniLibs.keepDebugSymbols.add("*/libGroudStation.so")
+        jniLibs.keepDebugSymbols.add("*/libFRCorkscrew.so")
+        jniLibs.keepDebugSymbols.add("*/libUpgradeVerify.so")
+        jniLibs.keepDebugSymbols.add("*/libFR.so")
+        jniLibs.keepDebugSymbols.add("*/libDJIFlySafeCore.so")
+        jniLibs.keepDebugSymbols.add("*/libdjifs_jni.so")
+        jniLibs.keepDebugSymbols.add("*/libsfjni.so")
+        jniLibs.excludes.add("META-INF/rxjava.properties")
+    }
+}
+
+dependencies {
+
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation("com.dji:dji-sdk:4.17")
+    compileOnly("com.dji:dji-sdk-provided:4.17")
+}
