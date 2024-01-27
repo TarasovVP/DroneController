@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainNavigation"
+    app:startDestination="@+id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.vnteam.dronecontroller.main.MainFragment" >
+        <action
+            android:id="@+id/startCameraFragment"
+            app:destination="@id/cameraFragment" />
+        <action
+            android:id="@+id/startLoginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.vnteam.dronecontroller.camera.CameraFragment"/>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.vnteam.dronecontroller.login.LoginFragment"/>
+</navigation>

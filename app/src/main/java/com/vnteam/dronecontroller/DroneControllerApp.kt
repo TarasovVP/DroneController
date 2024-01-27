@@ -1,15 +1,12 @@
-package com.vnteam.dronecontroller;
+package com.vnteam.dronecontroller
 
-import android.app.Application;
-import android.content.Context;
+import android.app.Application
+import android.content.Context
+import com.secneo.sdk.Helper
 
-import com.secneo.sdk.Helper;
-
-public class DroneControllerApp extends Application {
-
-    @Override
-    protected void attachBaseContext(Context paramContext) {
-        super.attachBaseContext(paramContext);
-        Helper.install(this);
+class DroneControllerApp : Application() {
+    override fun attachBaseContext(paramContext: Context) {
+        super.attachBaseContext(paramContext)
+        Helper.install(this)
     }
 }
