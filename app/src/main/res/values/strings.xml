@@ -6,4 +6,18 @@
     <string name="product_information">Product Information</string>
     <string name="connection_loose">Status: No Product Connected</string>
     <string name="sdk_version">DJI SDK Version: %1$s</string>
+
+    <string name="btn_start_channel">Start Channel</string>
+    <string name="btn_close_channel">Close Channel</string>
+    <string name="btn_yuv_screen_shot">YUV Screen Shot</string>
+    <string name="btn_resume_video">Resume Video</string>
+    <string name="btn_start_socket">Start Socket</string>
+    <string name="btn_close_socket">Close Socket</string>
+    <string name="btn_start_broadcast">Start Broadcast</string>
+    <string name="btn_stop_broadcast">Stop Broadcast</string>
+    <string name="btn_switch_source">SwitchSource</string>
+
+    <string name="select_stream_source">Select Stream Source</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -34,4 +34,6 @@ object Extensions {
         safeObserve(owner, observer)
         value = null
     }
+
+    const val DEFAULT_STR = "N/A"
 }

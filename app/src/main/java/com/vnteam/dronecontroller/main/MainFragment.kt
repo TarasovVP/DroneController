@@ -33,7 +33,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
             checkAndRequestPermissions()
         }
         binding?.btnCamera?.setOnClickListener {
-            findNavController().navigate(MainFragmentDirections.startCameraFragment())
+            findNavController().navigate(MainFragmentDirections.startVideoChannelFragment())
         }
     }
 
