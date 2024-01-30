@@ -24,7 +24,7 @@ abstract class BaseBindingFragment<VB : ViewBinding> : Fragment() {
 
 
 
-    fun showMessage(message: String, isError: Boolean) {
+    fun showMessage(message: String, isError: Boolean = true) {
         (activity as? MainActivity)?.showToast(message)
     }
 

@@ -18,6 +18,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     buildTypes {
@@ -40,20 +44,41 @@ android {
         jvmTarget = "1.8"
     }
 
+    // MSDK related so library
     packaging {
-        jniLibs.keepDebugSymbols.add("*/libdjivideo.so")
-        jniLibs.keepDebugSymbols.add("*/libSDKRelativeJNI.so")
-        jniLibs.keepDebugSymbols.add("*/libFlyForbid.so")
-        jniLibs.keepDebugSymbols.add("*/libduml_vision_bokeh.so")
-        jniLibs.keepDebugSymbols.add("*/libyuv2.so")
-        jniLibs.keepDebugSymbols.add("*/libGroudStation.so")
-        jniLibs.keepDebugSymbols.add("*/libFRCorkscrew.so")
-        jniLibs.keepDebugSymbols.add("*/libUpgradeVerify.so")
-        jniLibs.keepDebugSymbols.add("*/libFR.so")
-        jniLibs.keepDebugSymbols.add("*/libDJIFlySafeCore.so")
-        jniLibs.keepDebugSymbols.add("*/libdjifs_jni.so")
-        jniLibs.keepDebugSymbols.add("*/libsfjni.so")
-        jniLibs.excludes.add("META-INF/rxjava.properties")
+        resources.pickFirsts.add("lib/arm64-v8a/libc++_shared.so")
+        resources.pickFirsts.add("lib/armeabi-v7a/libc++_shared.so")
+    }
+
+    // MSDK related so library
+    packaging {
+        jniLibs.keepDebugSymbols.add("*/*/libconstants.so")
+        jniLibs.keepDebugSymbols.add("*/*/libdji_innertools.so")
+        jniLibs.keepDebugSymbols.add("*/*/libdjibase.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJICSDKCommon.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJIFlySafeCore-CSDK.so")
+        jniLibs.keepDebugSymbols.add("*/*/libdjifs_jni-CSDK.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJIRegister.so")
+        jniLibs.keepDebugSymbols.add("*/*/libdjisdk_jni.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJIUpgradeCore.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJIUpgradeJNI.so")
+        jniLibs.keepDebugSymbols.add("*/*/libDJIWaypointV2Core-CSDK.so")
+        jniLibs.keepDebugSymbols.add("*/*/libdjiwpv2-CSDK.so")
+        jniLibs.keepDebugSymbols.add("*/*/libFlightRecordEngine.so")
+        jniLibs.keepDebugSymbols.add("*/*/libvideo-framing.so")
+        jniLibs.keepDebugSymbols.add("*/*/libwaes.so")
+        jniLibs.keepDebugSymbols.add("*/*/libagora-rtsa-sdk.so")
+        jniLibs.keepDebugSymbols.add("*/*/libc++.so")
+        jniLibs.keepDebugSymbols.add("*/*/libc++_shared.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_28181.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_agora.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_core.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_core_jni.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_data.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_log.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_onvif.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_rtmp.so")
+        jniLibs.keepDebugSymbols.add("*/*/libmrtc_rtsp.so")
     }
 }
 
@@ -70,9 +95,12 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // DJI SDK
-    implementation("com.dji:dji-sdk:4.17")
-    compileOnly("com.dji:dji-sdk-provided:4.17")
+    implementation("com.dji:dji-sdk-v5-aircraft:5.7.1")
+    compileOnly("com.dji:dji-sdk-v5-aircraft-provided:5.7.1")
+    runtimeOnly("com.dji:dji-sdk-v5-networkImp:5.7.1")
     //Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    //Camera
+    implementation("androidx.camera:camera-view:1.3.1")
 }

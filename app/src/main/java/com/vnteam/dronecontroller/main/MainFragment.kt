@@ -3,25 +3,12 @@ package com.vnteam.dronecontroller.main
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.vnteam.dronecontroller.base.BaseFragment
-import com.vnteam.dronecontroller.MainActivity
-import com.vnteam.dronecontroller.R
 import com.vnteam.dronecontroller.databinding.FragmentMainBinding
-import dji.common.error.DJIError
-import dji.common.error.DJISDKError
-import dji.sdk.base.BaseComponent
-import dji.sdk.base.BaseProduct
-import dji.sdk.products.Aircraft
-import dji.sdk.sdkmanager.DJISDKInitEvent
-import dji.sdk.sdkmanager.DJISDKManager
-import dji.thirdparty.afinal.core.AsyncTask
-import java.util.concurrent.atomic.AtomicBoolean
 
 class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
 
@@ -35,6 +22,7 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
             notifyStatusChange(status.first, status.second)
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setClickListeners()
@@ -85,8 +73,6 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
 
 
     companion object {
-        private val TAG = MainActivity::class.java.name
-        private var mProduct: BaseProduct? = null
         private val REQUIRED_PERMISSION_LIST = arrayOf(
             Manifest.permission.VIBRATE,  // Gimbal rotation
             Manifest.permission.INTERNET,  // API requests
@@ -101,7 +87,10 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
             // TODO Manifest.permission.READ_EXTERNAL_STORAGE, // Log files
             Manifest.permission.READ_PHONE_STATE,  // Device UUID accessed upon registration
             Manifest.permission.RECORD_AUDIO // Speaker accessory
-        )
-        private const val REQUEST_PERMISSION_CODE = 12345
+        ).apply {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                plus(Manifest.permission.BLUETOOTH_SCAN)
+            }
+        }
     }
 }

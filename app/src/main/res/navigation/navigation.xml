@@ -13,6 +13,9 @@
         <action
             android:id="@+id/startLoginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/startBluetoothFragment"
+            app:destination="@id/bluetoothFragment" />
     </fragment>
 
     <fragment
@@ -22,4 +25,8 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.vnteam.dronecontroller.login.LoginFragment"/>
+
+    <fragment
+        android:id="@+id/bluetoothFragment"
+        android:name="com.vnteam.dronecontroller.bluetooth.BluetoothFragment"/>
 </navigation>
