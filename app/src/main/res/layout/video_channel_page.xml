@@ -31,7 +31,7 @@
         android:scrollbars="vertical"
         android:text="asdasd"
         android:textColor="@color/white"
-        android:gravity="bottom"/>
+        android:gravity="bottom" />
 
     <include
         android:id="@+id/horizontal_scrollView"

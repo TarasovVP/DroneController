@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/streamSourceTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Stream Source:"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/streamSourceValue" />
+
+    <TextView
+        android:id="@+id/streamSourceValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/streamSourceTitle"
+        app:layout_constraintTop_toTopOf="@+id/streamSourceTitle"
+        app:layout_constraintStart_toEndOf="@+id/streamSourceTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/channelTypeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Channel Type:"
+        app:layout_constraintTop_toBottomOf="@+id/streamSourceTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/channelTypeValue" />
+
+    <TextView
+        android:id="@+id/channelTypeValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/channelTypeTitle"
+        app:layout_constraintTop_toTopOf="@+id/channelTypeTitle"
+        app:layout_constraintStart_toEndOf="@+id/channelTypeTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/channelStateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Channel State:"
+        app:layout_constraintTop_toBottomOf="@+id/channelTypeTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/channelStateValue" />
+
+    <TextView
+        android:id="@+id/channelStateValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/channelStateTitle"
+        app:layout_constraintTop_toTopOf="@+id/channelStateTitle"
+        app:layout_constraintStart_toEndOf="@+id/channelStateTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/decoderStateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Decoder State:"
+        app:layout_constraintTop_toBottomOf="@+id/channelStateTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/decoderStateValue" />
+
+    <TextView
+        android:id="@+id/decoderStateValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/decoderStateTitle"
+        app:layout_constraintTop_toTopOf="@+id/decoderStateTitle"
+        app:layout_constraintStart_toEndOf="@+id/decoderStateTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/resolutionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Resolution:"
+        app:layout_constraintTop_toBottomOf="@+id/decoderStateTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/resolutionValue" />
+
+    <TextView
+        android:id="@+id/resolutionValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/resolutionTitle"
+        app:layout_constraintTop_toTopOf="@+id/resolutionTitle"
+        app:layout_constraintStart_toEndOf="@+id/resolutionTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/fpsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="FPS:"
+        app:layout_constraintTop_toBottomOf="@+id/resolutionTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fpsValue" />
+
+    <TextView
+        android:id="@+id/fpsValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/fpsTitle"
+        app:layout_constraintTop_toTopOf="@+id/fpsTitle"
+        app:layout_constraintStart_toEndOf="@+id/fpsTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/formatTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Format:"
+        app:layout_constraintTop_toBottomOf="@+id/fpsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/formatValue" />
+
+    <TextView
+        android:id="@+id/formatValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/formatTitle"
+        app:layout_constraintTop_toTopOf="@+id/formatTitle"
+        app:layout_constraintStart_toEndOf="@+id/formatTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/bitRateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Bit Rate:"
+        app:layout_constraintTop_toBottomOf="@+id/formatTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bitRateValue" />
+
+    <TextView
+        android:id="@+id/bitRateValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/bitRateTitle"
+        app:layout_constraintTop_toTopOf="@+id/bitRateTitle"
+        app:layout_constraintStart_toEndOf="@+id/bitRateTitle"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

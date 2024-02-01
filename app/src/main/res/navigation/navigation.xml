@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.vnteam.dronecontroller.main.MainFragment" >
+        android:name="com.vnteam.dronecontroller.main.MainFragment">
         <action
             android:id="@+id/startCameraFragment"
             app:destination="@id/cameraFragment" />
@@ -23,15 +23,15 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.vnteam.dronecontroller.camera.CameraFragment"/>
+        android:name="com.vnteam.dronecontroller.camera.CameraFragment" />
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.vnteam.dronecontroller.login.LoginFragment"/>
+        android:name="com.vnteam.dronecontroller.login.LoginFragment" />
 
     <fragment
         android:id="@+id/bluetoothFragment"
-        android:name="com.vnteam.dronecontroller.bluetooth.BluetoothFragment"/>
+        android:name="com.vnteam.dronecontroller.bluetooth.BluetoothFragment" />
 
     <fragment
         android:id="@+id/videoChannelFragment"

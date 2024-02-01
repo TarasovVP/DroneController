@@ -2,10 +2,8 @@ package com.vnteam.dronecontroller.login
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.vnteam.dronecontroller.DroneControllerApp
 import com.vnteam.dronecontroller.base.BaseViewModel
 import dji.v5.manager.account.UserAccountManager
-import kotlinx.coroutines.delay
 
 class LoginViewModel(private val application: Application) : BaseViewModel(application) {
 

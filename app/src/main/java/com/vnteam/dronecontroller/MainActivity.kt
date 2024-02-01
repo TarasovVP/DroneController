@@ -3,11 +3,11 @@ package com.vnteam.dronecontroller
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.snackbar.Snackbar
 import com.vnteam.dronecontroller.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +33,9 @@ class MainActivity : AppCompatActivity() {
 
     fun showToast(toastMsg: String) {
         val handler = Handler(Looper.getMainLooper())
-        handler.post { Toast.makeText(applicationContext, toastMsg, Toast.LENGTH_LONG).show() }
+        handler.post {
+            binding?.root?.let { Snackbar.make(it, toastMsg, Snackbar.LENGTH_LONG).show() }
+        }
     }
 
     fun setProgressVisibility(visible: Boolean) {
