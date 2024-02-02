@@ -10,22 +10,6 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            android:text="Application Registration Demo"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
         <TextView
             android:id="@+id/text_product_label"
             android:layout_width="match_parent"
@@ -37,14 +21,13 @@
             android:textColor="@android:color/black"
             android:textSize="20dp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_product_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingVertical="10dp"
             android:text="Undefined"
             android:textColor="@color/black"
             android:textSize="17dp"
@@ -79,7 +62,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:paddingVertical="10dp"
             android:text="Undefined"
             android:textColor="@color/black"
             android:textSize="17sp"

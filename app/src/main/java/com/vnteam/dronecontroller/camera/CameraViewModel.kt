@@ -7,7 +7,9 @@ import dji.sdk.keyvalue.key.CameraKey
 import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.v5.common.video.channel.VideoChannelState
 import dji.v5.common.video.channel.VideoChannelType
+import dji.v5.common.video.interfaces.DecoderStateChangeListener
 import dji.v5.common.video.interfaces.IVideoChannel
+import dji.v5.common.video.interfaces.StreamDataListener
 import dji.v5.common.video.interfaces.VideoChannelStateChangeListener
 import dji.v5.et.action
 import dji.v5.et.cancelListen
@@ -18,15 +20,15 @@ import dji.v5.manager.datacenter.MediaDataCenter
 class CameraViewModel(application: Application) : BaseViewModel(application) {
 
     val videoChannelInfo = MutableLiveData<VideoChannelInfo>()
-    var curVideoChannel: IVideoChannel? = null
-    var videoChannelStateListener: VideoChannelStateChangeListener? = null
-    var curChannelType: VideoChannelType? = null
-    var fcHasInit = false
+    var curVideoChannel = MutableLiveData<IVideoChannel>()
+    private var videoChannelStateListener: VideoChannelStateChangeListener? = null
+    private var curChannelType: VideoChannelType? = null
+    private var fcHasInit = false
 
     fun initVideoStream() {
         MediaDataCenter.getInstance().videoStreamManager.getAvailableVideoChannel(VideoChannelType.PRIMARY_STREAM_CHANNEL)
             ?.let { videoChannel ->
-                curVideoChannel = videoChannel
+                curVideoChannel.postValue(videoChannel)
                 videoChannelInfo.value = VideoChannelInfo(
                     videoChannelState = videoChannel.videoChannelStatus,
                     streamSource = videoChannel.streamSource,
@@ -34,7 +36,6 @@ class CameraViewModel(application: Application) : BaseViewModel(application) {
                     format = videoChannel.videoStreamFormat.name
                 )
                 videoChannelStateListener = VideoChannelStateChangeListener { _, to ->
-
                     if (videoChannelInfo.value == null) {
                         videoChannelInfo.value = VideoChannelInfo(to)
                     } else {
@@ -62,11 +63,11 @@ class CameraViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun initListeners() {
-        curVideoChannel?.addVideoChannelStateChangeListener(videoChannelStateListener)
+        curVideoChannel.value?.addVideoChannelStateChangeListener(videoChannelStateListener)
     }
 
     private fun removeListeners() {
-        curVideoChannel?.removeVideoChannelStateChangeListener(videoChannelStateListener)
+        curVideoChannel.value?.removeVideoChannelStateChangeListener(videoChannelStateListener)
     }
 
     private fun addConnectionListener() {
@@ -76,8 +77,8 @@ class CameraViewModel(application: Application) : BaseViewModel(application) {
                     curChannelType?.let { it1 ->
                         MediaDataCenter.getInstance().videoStreamManager.getAvailableVideoChannel(
                             it1
-                        ).let {
-                            curVideoChannel = it
+                        )?.let { iVideoChannel ->
+                            curVideoChannel.postValue(iVideoChannel)
                         }
                     }
                     removeListeners()
@@ -92,8 +93,50 @@ class CameraViewModel(application: Application) : BaseViewModel(application) {
         FlightControllerKey.KeyConnection.create().cancelListen(this)
     }
 
-    fun refreshVideoChannelInfo() {
+    private fun refreshVideoChannelInfo() {
         videoChannelInfo.postValue(videoChannelInfo.value)
     }
+
+    val decoderStateChangeListener =
+        DecoderStateChangeListener { _, newState ->
+            launch {
+                videoChannelInfo.value?.decoderState = newState
+                refreshVideoChannelInfo()
+            }
+        }
+
+    private var videoWidth: Int = -1
+    private var videoHeight: Int = -1
+    private var widthChanged = false
+    private var heightChanged = false
+    private var fps: Int = -1
+
+    val streamDataListener =
+        StreamDataListener { iVideoFrame ->
+            if (fps != iVideoFrame.fps) {
+                fps = iVideoFrame.fps
+                launch {
+                    videoChannelInfo.value?.fps = fps
+                    refreshVideoChannelInfo()
+                }
+            }
+            if (videoWidth != iVideoFrame.width) {
+                videoWidth = iVideoFrame.width
+                widthChanged = true
+            }
+            if (videoHeight != iVideoFrame.height) {
+                videoHeight = iVideoFrame.height
+                heightChanged = true
+            }
+            if (widthChanged || heightChanged) {
+                widthChanged = false
+                heightChanged = false
+                launch {
+                    videoChannelInfo.value?.resolution =
+                        "${videoWidth}*${videoHeight}"
+                    refreshVideoChannelInfo()
+                }
+            }
+        }
 
 }
