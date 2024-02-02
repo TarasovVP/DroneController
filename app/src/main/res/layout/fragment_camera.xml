@@ -11,6 +11,11 @@
         android:layout_height="match_parent"
         app:scaleType="fillStart" />
 
+    <com.vnteam.dronecontroller.utils.OverlayView
+        android:id="@+id/overlay"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
     <ImageButton
         android:id="@+id/info_button"
         android:layout_width="wrap_content"

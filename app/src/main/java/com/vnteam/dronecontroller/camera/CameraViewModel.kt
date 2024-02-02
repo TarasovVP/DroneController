@@ -1,8 +1,10 @@
 package com.vnteam.dronecontroller.camera
 
 import android.app.Application
+import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData
 import com.vnteam.dronecontroller.base.BaseViewModel
+import com.vnteam.dronecontroller.utils.ObjectDetectorHelper
 import dji.sdk.keyvalue.key.CameraKey
 import dji.sdk.keyvalue.key.FlightControllerKey
 import dji.v5.common.video.channel.VideoChannelState
@@ -11,19 +13,22 @@ import dji.v5.common.video.interfaces.DecoderStateChangeListener
 import dji.v5.common.video.interfaces.IVideoChannel
 import dji.v5.common.video.interfaces.StreamDataListener
 import dji.v5.common.video.interfaces.VideoChannelStateChangeListener
+import dji.v5.common.video.interfaces.YuvDataListener
 import dji.v5.et.action
 import dji.v5.et.cancelListen
 import dji.v5.et.create
 import dji.v5.et.listen
 import dji.v5.manager.datacenter.MediaDataCenter
 
-class CameraViewModel(application: Application) : BaseViewModel(application) {
+class CameraViewModel(private val application: Application) : BaseViewModel(application) {
 
     val videoChannelInfo = MutableLiveData<VideoChannelInfo>()
     var curVideoChannel = MutableLiveData<IVideoChannel>()
     private var videoChannelStateListener: VideoChannelStateChangeListener? = null
     private var curChannelType: VideoChannelType? = null
     private var fcHasInit = false
+    private var objectDetectorHelper: ObjectDetectorHelper? = null
+    var objectDetectionLV = MutableLiveData<ObjectDetection>()
 
     fun initVideoStream() {
         MediaDataCenter.getInstance().videoStreamManager.getAvailableVideoChannel(VideoChannelType.PRIMARY_STREAM_CHANNEL)
@@ -139,4 +144,23 @@ class CameraViewModel(application: Application) : BaseViewModel(application) {
             }
         }
 
+    fun initObjectDetector() {
+        objectDetectorHelper = ObjectDetectorHelper(
+            context = application,
+            objectDetectorListener = object : ObjectDetectorHelper.DetectorListener {
+                override fun onError(error: String) {
+                    exceptionLiveData.postValue(error)
+                }
+
+                override fun onResults(objectDetection: ObjectDetection) {
+                    objectDetectionLV.postValue(objectDetection)
+                }
+
+            })
+    }
+
+    val yuvDataListener = YuvDataListener { _, data, _, _ ->
+        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+        objectDetectorHelper?.detect(bitmap, 0)
+    }
 }

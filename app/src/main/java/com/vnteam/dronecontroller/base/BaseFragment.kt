@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.vnteam.dronecontroller.Extensions.safeSingleObserve
+import com.vnteam.dronecontroller.utils.Extensions.safeSingleObserve
 import com.vnteam.dronecontroller.MainActivity
 
 abstract class BaseFragment<B : ViewBinding, VM : BaseViewModel> : BaseBindingFragment<B>() {

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.vnteam.dronecontroller.Extensions.safeSingleObserve
+import com.vnteam.dronecontroller.utils.Extensions.safeSingleObserve
 import com.vnteam.dronecontroller.base.BaseFragment
 import com.vnteam.dronecontroller.databinding.CameraInfoBinding
 import com.vnteam.dronecontroller.databinding.FragmentCameraBinding
@@ -16,7 +16,6 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
 
     override val viewModelClass = CameraViewModel::class.java
     override fun getViewBinding() = FragmentCameraBinding.inflate(layoutInflater)
-    override fun observeLiveData() = Unit
 
     private var videoDecoder: IVideoDecoder? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
@@ -25,13 +24,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setSurfaceCallback()
+        viewModel.initObjectDetector()
         viewModel.initVideoStream()
-        viewModel.curVideoChannel.safeSingleObserve(viewLifecycleOwner) {
-            it.addStreamDataListener(viewModel.streamDataListener)
-            binding?.infoButton?.setOnClickListener {
-                showCameraInfo()
-            }
-        }
     }
 
     private fun setSurfaceCallback() {
@@ -55,6 +49,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
                             height
                         )
                         videoDecoder?.addDecoderStateChangeListener(viewModel.decoderStateChangeListener)
+                        videoDecoder?.addYuvDataListener(viewModel.yuvDataListener)
                         viewModel.decoderStateChangeListener.onUpdate(
                             videoDecoder?.decoderStatus,
                             videoDecoder?.decoderStatus
@@ -65,12 +60,32 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 viewModel.curVideoChannel.value?.removeStreamDataListener(viewModel.streamDataListener)
+                videoDecoder?.removeYuvDataListener(viewModel.yuvDataListener)
                 videoDecoder.takeIf { it != null }?.let {
                     it.destroy()
                     videoDecoder = null
                 }
             }
         })
+    }
+
+    override fun observeLiveData() {
+        with(viewModel) {
+            curVideoChannel.safeSingleObserve(viewLifecycleOwner) {
+                it.addStreamDataListener(viewModel.streamDataListener)
+                binding?.infoButton?.setOnClickListener {
+                    showCameraInfo()
+                }
+                objectDetectionLV.safeSingleObserve(viewLifecycleOwner) { results ->
+                    binding?.overlay?.setResults(
+                        results.results.orEmpty().toMutableList(),
+                        results.imageHeight,
+                        results.imageWidth
+                    )
+                    binding?.overlay?.invalidate()
+                }
+            }
+        }
     }
 
     private fun showCameraInfo() {

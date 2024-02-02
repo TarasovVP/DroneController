@@ -7,12 +7,11 @@ import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.os.*
 import android.view.*
-import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
-import com.vnteam.dronecontroller.Extensions.DEFAULT_STR
+import com.vnteam.dronecontroller.utils.Extensions.DEFAULT_STR
 import com.vnteam.dronecontroller.R
 import com.vnteam.dronecontroller.base.BaseBindingFragment
 import com.vnteam.dronecontroller.databinding.VideoChannelPageBinding

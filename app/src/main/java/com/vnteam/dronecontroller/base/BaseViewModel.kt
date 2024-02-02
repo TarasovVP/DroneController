@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.vnteam.dronecontroller.Extensions.launchIO
+import com.vnteam.dronecontroller.utils.Extensions.launchIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 

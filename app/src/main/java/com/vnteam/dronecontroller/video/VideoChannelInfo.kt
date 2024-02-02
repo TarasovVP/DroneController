@@ -1,6 +1,6 @@
 package com.vnteam.dronecontroller.video
 
-import com.vnteam.dronecontroller.Extensions.DEFAULT_STR
+import com.vnteam.dronecontroller.utils.Extensions.DEFAULT_STR
 import dji.v5.common.video.channel.VideoChannelState
 import dji.v5.common.video.channel.VideoChannelType
 import dji.v5.common.video.decoder.DecoderState
