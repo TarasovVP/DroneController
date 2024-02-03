@@ -1,7 +1,10 @@
 package com.vnteam.dronecontroller.camera
 
 import android.app.Application
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageFormat
+import android.graphics.YuvImage
 import androidx.lifecycle.MutableLiveData
 import com.vnteam.dronecontroller.base.BaseViewModel
 import com.vnteam.dronecontroller.utils.ObjectDetectorHelper
@@ -19,6 +22,7 @@ import dji.v5.et.cancelListen
 import dji.v5.et.create
 import dji.v5.et.listen
 import dji.v5.manager.datacenter.MediaDataCenter
+import java.io.ByteArrayOutputStream
 
 class CameraViewModel(private val application: Application) : BaseViewModel(application) {
 
@@ -27,8 +31,10 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
     private var videoChannelStateListener: VideoChannelStateChangeListener? = null
     private var curChannelType: VideoChannelType? = null
     private var fcHasInit = false
-    private var objectDetectorHelper: ObjectDetectorHelper? = null
+    var objectDetectorHelper: ObjectDetectorHelper? = null
     var objectDetectionLV = MutableLiveData<ObjectDetection>()
+    var bitmapLV = MutableLiveData<Bitmap>()
+    var yuvDataListener: YuvDataListener? = null
 
     fun initVideoStream() {
         MediaDataCenter.getInstance().videoStreamManager.getAvailableVideoChannel(VideoChannelType.PRIMARY_STREAM_CHANNEL)
@@ -142,6 +148,8 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
                     refreshVideoChannelInfo()
                 }
             }
+            val bitmap = BitmapFactory.decodeByteArray(iVideoFrame.data, 0, iVideoFrame.data.size)
+            bitmapLV.postValue(bitmap)
         }
 
     fun initObjectDetector() {
@@ -159,8 +167,26 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
             })
     }
 
-    val yuvDataListener = YuvDataListener { _, data, _, _ ->
-        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
-        objectDetectorHelper?.detect(bitmap, 0)
+    var count = 0
+    fun initYuvDataListener(): YuvDataListener {
+        return yuvDataListener ?: YuvDataListener { _, data, width, height ->
+            launch {
+                if (++count == 10) {
+                    count = 0
+                    val yuvImage = YuvImage(data, ImageFormat.NV21, width, height, null)
+                    val out = ByteArrayOutputStream()
+                    yuvImage.compressToJpeg(android.graphics.Rect(0, 0, width, height), 100, out)
+                    val imageBytes = out.toByteArray()
+                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    bitmapLV.postValue(bitmap)
+                    objectDetectorHelper?.detect(bitmap, 0)
+                }
+            }
+        }
+    }
+
+    fun removeYuvDataListener() {
+        yuvDataListener = null
+        objectDetectorHelper?.clearObjectDetector()
     }
 }

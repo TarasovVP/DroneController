@@ -16,13 +16,22 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 
-    <ImageButton
-        android:id="@+id/info_button"
+    <CheckBox
+        android:id="@+id/camera_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:src="@android:drawable/ic_dialog_info"
+        android:text="Camera Info"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/object_detection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="Yuv format"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

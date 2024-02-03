@@ -20,7 +20,7 @@ class ObjectDetectorHelper(
   var currentDelegate: Int = 0,
   var currentModel: Int = 0,
   val context: Context,
-  val objectDetectorListener: DetectorListener?
+  var objectDetectorListener: DetectorListener?
 ) {
 
     // For this example this needs to be a var so it can be reset on changes. If the ObjectDetector
@@ -32,7 +32,12 @@ class ObjectDetectorHelper(
     }
 
     fun clearObjectDetector() {
-        objectDetector = null
+        objectDetectorListener?.onResults(
+            ObjectDetection(
+                mutableListOf(),
+                0L,
+                0,
+                0))
     }
 
     // Initialize the object detector using current settings on the

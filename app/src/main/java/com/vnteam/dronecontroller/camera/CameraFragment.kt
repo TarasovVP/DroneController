@@ -1,13 +1,16 @@
 package com.vnteam.dronecontroller.camera
 
+import android.graphics.Matrix
 import android.os.Bundle
 import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.vnteam.dronecontroller.utils.Extensions.safeSingleObserve
 import com.vnteam.dronecontroller.base.BaseFragment
-import com.vnteam.dronecontroller.databinding.CameraInfoBinding
 import com.vnteam.dronecontroller.databinding.FragmentCameraBinding
+import com.vnteam.dronecontroller.utils.Extensions.safeSingleObserve
+import com.vnteam.dronecontroller.utils.Extensions.showCameraInfo
+import dji.v5.common.video.channel.VideoChannelType
 import dji.v5.common.video.decoder.DecoderOutputMode
 import dji.v5.common.video.decoder.VideoDecoder
 import dji.v5.common.video.interfaces.IVideoDecoder
@@ -38,29 +41,12 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
                 width: Int,
                 height: Int,
             ) {
-                if (videoDecoder == null) {
-                    viewModel.curVideoChannel.let {
-                        videoDecoder = VideoDecoder(
-                            activity,
-                            it.value?.videoChannelType,
-                            DecoderOutputMode.SURFACE_MODE,
-                            holder,
-                            width,
-                            height
-                        )
-                        videoDecoder?.addDecoderStateChangeListener(viewModel.decoderStateChangeListener)
-                        videoDecoder?.addYuvDataListener(viewModel.yuvDataListener)
-                        viewModel.decoderStateChangeListener.onUpdate(
-                            videoDecoder?.decoderStatus,
-                            videoDecoder?.decoderStatus
-                        )
-                    }
-                }
+                binding?.surfaceView?.initVideoDecoder(false)
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 viewModel.curVideoChannel.value?.removeStreamDataListener(viewModel.streamDataListener)
-                videoDecoder?.removeYuvDataListener(viewModel.yuvDataListener)
+                viewModel.yuvDataListener?.let { videoDecoder?.removeYuvDataListener(it) }
                 videoDecoder.takeIf { it != null }?.let {
                     it.destroy()
                     videoDecoder = null
@@ -73,46 +59,71 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
         with(viewModel) {
             curVideoChannel.safeSingleObserve(viewLifecycleOwner) {
                 it.addStreamDataListener(viewModel.streamDataListener)
-                binding?.infoButton?.setOnClickListener {
-                    showCameraInfo()
+                binding?.cameraInfo?.setOnCheckedChangeListener { _, isChecked ->
+                    bottomSheetDialog = bottomSheetDialog ?: activity?.showCameraInfo(viewModel.videoChannelInfo.value) {
+                        binding?.cameraInfo?.isChecked = binding?.cameraInfo?.isChecked != true
+                    }
+                    if (isChecked) {
+                        bottomSheetDialog?.show()
+                    } else {
+                        bottomSheetDialog?.dismiss()
+                    }
                 }
-                objectDetectionLV.safeSingleObserve(viewLifecycleOwner) { results ->
-                    binding?.overlay?.setResults(
-                        results.results.orEmpty().toMutableList(),
-                        results.imageHeight,
-                        results.imageWidth
-                    )
-                    binding?.overlay?.invalidate()
+                binding?.objectDetection?.setOnCheckedChangeListener { _, isChecked ->
+                    binding?.surfaceView?.initVideoDecoder(isChecked)
+                }
+            }
+            objectDetectionLV.safeSingleObserve(viewLifecycleOwner) { results ->
+                binding?.overlay?.setResults(
+                    results.results.orEmpty().toMutableList(),
+                    results.imageHeight,
+                    results.imageWidth
+                )
+                binding?.overlay?.invalidate()
+            }
+            bitmapLV.safeSingleObserve(viewLifecycleOwner) { bitmap ->
+                val holderCanvas = binding?.surfaceView?.holder?.lockCanvas()
+                holderCanvas?.let { canvas ->
+                    val scaleX = canvas.width.toFloat() / bitmap.width
+                    val scaleY = canvas.height.toFloat() / bitmap.height
+
+                    val matrix = Matrix()
+                    matrix.setScale(scaleX, scaleY)
+
+                    canvas.drawBitmap(bitmap, matrix, null)
+                    binding?.surfaceView?.holder?.unlockCanvasAndPost(canvas)
                 }
             }
         }
     }
 
-    private fun showCameraInfo() {
-        if (bottomSheetDialog?.isShowing == true) {
-            return
+    private fun SurfaceView.initVideoDecoder(isYuvFormat: Boolean) {
+        showMessage("objectDetectionLV videoDecoder $videoDecoder isYuvFormat $isYuvFormat")
+        videoDecoder?.let {
+            videoDecoder?.onPause()
+            videoDecoder?.destroy()
+            videoDecoder = null
         }
-        bottomSheetDialog = activity?.let { it1 -> BottomSheetDialog(it1) }
-        val binding = CameraInfoBinding.inflate(layoutInflater)
-        bottomSheetDialog?.setContentView(binding.root)
-        viewModel.videoChannelInfo.value?.let { info ->
-            binding.streamSourceValue.text = String.format(
-                "%s : %s : %s",
-                info.streamSource?.physicalDeviceCategory,
-                info.streamSource?.physicalDeviceType?.deviceType,
-                info.streamSource?.physicalDevicePosition
-            )
-            binding.channelTypeValue.text = info.videoChannelType?.name
-            binding.channelStateValue.text = info.videoChannelState.name
-            binding.decoderStateValue.text = info.decoderState.name
-            binding.resolutionValue.text = info.resolution
-            binding.formatValue.text = info.format
-            binding.fpsValue.text = info.fps.toString()
-            binding.bitRateValue.text = info.bitRate.toString()
+        videoDecoder = VideoDecoder(
+            activity,
+            viewModel.curVideoChannel.value?.videoChannelType ?: VideoChannelType.PRIMARY_STREAM_CHANNEL,
+            if (isYuvFormat) DecoderOutputMode.YUV_MODE else DecoderOutputMode.SURFACE_MODE,
+            holder,
+            width,
+            height
+        )
+        if (isYuvFormat) {
+            viewModel.initYuvDataListener().apply {
+                videoDecoder?.addYuvDataListener(this)
+            }
+        } else {
+            viewModel.yuvDataListener?.let { videoDecoder?.removeYuvDataListener(it) }
+            viewModel.removeYuvDataListener()
+            binding?.overlay?.clear()
         }
-        binding.closeButton.setOnClickListener {
-            bottomSheetDialog?.dismiss()
-        }
-        bottomSheetDialog?.show()
+        videoDecoder?.addDecoderStateChangeListener(viewModel.decoderStateChangeListener)
+        viewModel.decoderStateChangeListener.onUpdate(videoDecoder?.decoderStatus,videoDecoder?.decoderStatus)
+        videoDecoder?.onResume()
+        binding?.surfaceView?.holder?.lockCanvas()?.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR)
     }
 }
