@@ -1,6 +1,9 @@
 package com.vnteam.dronecontroller.camera
 
+import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.PixelFormat
 import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -22,6 +25,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
 
     private var videoDecoder: IVideoDecoder? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
+    private var surfaceControlCallback: SurfaceHolder.Callback? = null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,7 +36,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
     }
 
     private fun setSurfaceCallback() {
-        binding?.surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
+        surfaceControlCallback = object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) = Unit
 
             override fun surfaceChanged(
@@ -41,7 +45,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
                 width: Int,
                 height: Int,
             ) {
-                binding?.surfaceView?.initVideoDecoder(false)
+                if (videoDecoder == null ) binding?.surfaceView?.initVideoDecoder(binding?.objectDetection?.isChecked == true)
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -52,7 +56,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
                     videoDecoder = null
                 }
             }
-        })
+        }
+        binding?.surfaceView?.holder?.addCallback(surfaceControlCallback)
     }
 
     override fun observeLiveData() {
@@ -98,7 +103,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
     }
 
     private fun SurfaceView.initVideoDecoder(isYuvFormat: Boolean) {
-        showMessage("objectDetectionLV videoDecoder $videoDecoder isYuvFormat $isYuvFormat")
+        showMessage("initVideoDecoder videoDecoder $videoDecoder isYuvFormat $isYuvFormat viewModel.yuvDataListener ${viewModel.yuvDataListener}")
         videoDecoder?.let {
             videoDecoder?.onPause()
             videoDecoder?.destroy()
@@ -113,17 +118,19 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
             height
         )
         if (isYuvFormat) {
-            viewModel.initYuvDataListener().apply {
+            viewModel.initYuvDataListener()?.apply {
                 videoDecoder?.addYuvDataListener(this)
             }
         } else {
-            viewModel.yuvDataListener?.let { videoDecoder?.removeYuvDataListener(it) }
-            viewModel.removeYuvDataListener()
-            binding?.overlay?.clear()
+            viewModel.yuvDataListener?.let {
+                videoDecoder?.removeYuvDataListener(it)
+                viewModel.removeYuvDataListener()
+                binding?.overlay?.clear()
+
+            }
         }
         videoDecoder?.addDecoderStateChangeListener(viewModel.decoderStateChangeListener)
         viewModel.decoderStateChangeListener.onUpdate(videoDecoder?.decoderStatus,videoDecoder?.decoderStatus)
         videoDecoder?.onResume()
-        binding?.surfaceView?.holder?.lockCanvas()?.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR)
     }
 }

@@ -148,8 +148,6 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
                     refreshVideoChannelInfo()
                 }
             }
-            val bitmap = BitmapFactory.decodeByteArray(iVideoFrame.data, 0, iVideoFrame.data.size)
-            bitmapLV.postValue(bitmap)
         }
 
     fun initObjectDetector() {
@@ -168,8 +166,8 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
     }
 
     var count = 0
-    fun initYuvDataListener(): YuvDataListener {
-        return yuvDataListener ?: YuvDataListener { _, data, width, height ->
+    fun initYuvDataListener(): YuvDataListener? {
+        yuvDataListener = yuvDataListener ?: YuvDataListener { _, data, width, height ->
             launch {
                 if (++count == 10) {
                     count = 0
@@ -183,6 +181,7 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
                 }
             }
         }
+        return yuvDataListener
     }
 
     fun removeYuvDataListener() {

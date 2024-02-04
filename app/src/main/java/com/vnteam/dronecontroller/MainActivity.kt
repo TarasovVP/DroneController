@@ -34,7 +34,11 @@ class MainActivity : AppCompatActivity() {
     fun showToast(toastMsg: String) {
         val handler = Handler(Looper.getMainLooper())
         handler.post {
-            binding?.root?.let { Snackbar.make(it, toastMsg, Snackbar.LENGTH_LONG).show() }
+            binding?.root?.let {
+                val snackbar = Snackbar.make(it, toastMsg, Snackbar.LENGTH_LONG)
+                snackbar.setTextMaxLines(Int.MAX_VALUE)
+                snackbar.show()
+            }
         }
     }
 
