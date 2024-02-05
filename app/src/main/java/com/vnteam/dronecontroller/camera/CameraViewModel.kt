@@ -33,7 +33,7 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
     private var fcHasInit = false
     var objectDetectorHelper: ObjectDetectorHelper? = null
     var objectDetectionLV = MutableLiveData<ObjectDetection>()
-    var bitmapLV = MutableLiveData<Bitmap>()
+    var biteArrayLV = MutableLiveData<ByteArray>()
     var yuvDataListener: YuvDataListener? = null
 
     fun initVideoStream() {
@@ -175,9 +175,8 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
                     val out = ByteArrayOutputStream()
                     yuvImage.compressToJpeg(android.graphics.Rect(0, 0, width, height), 100, out)
                     val imageBytes = out.toByteArray()
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    bitmapLV.postValue(bitmap)
-                    objectDetectorHelper?.detect(bitmap, 0)
+                    biteArrayLV.postValue(imageBytes)
+                    objectDetectorHelper?.detect(imageBytes, 0)
                 }
             }
         }

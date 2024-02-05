@@ -2,6 +2,7 @@ package com.vnteam.dronecontroller.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.SystemClock
 import android.util.Log
 import com.vnteam.dronecontroller.camera.ObjectDetection
@@ -93,7 +94,7 @@ class ObjectDetectorHelper(
         }
     }
 
-    fun detect(image: Bitmap, imageRotation: Int) {
+    fun detect(byteArray: ByteArray, imageRotation: Int) {
         if (objectDetector == null) {
             setupObjectDetector()
         }
@@ -111,7 +112,8 @@ class ObjectDetectorHelper(
                 .build()
 
         // Preprocess the image and convert it into a TensorImage for detection.
-        val tensorImage = imageProcessor.process(TensorImage.fromBitmap(image))
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
 
         val results = objectDetector?.detect(tensorImage)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime

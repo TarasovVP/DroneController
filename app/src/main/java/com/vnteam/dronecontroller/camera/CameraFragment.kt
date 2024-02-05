@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.vnteam.dronecontroller.base.BaseFragment
 import com.vnteam.dronecontroller.databinding.FragmentCameraBinding
@@ -86,24 +89,13 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
                 )
                 binding?.overlay?.invalidate()
             }
-            bitmapLV.safeSingleObserve(viewLifecycleOwner) { bitmap ->
-                val holderCanvas = binding?.surfaceView?.holder?.lockCanvas()
-                holderCanvas?.let { canvas ->
-                    val scaleX = canvas.width.toFloat() / bitmap.width
-                    val scaleY = canvas.height.toFloat() / bitmap.height
-
-                    val matrix = Matrix()
-                    matrix.setScale(scaleX, scaleY)
-
-                    canvas.drawBitmap(bitmap, matrix, null)
-                    binding?.surfaceView?.holder?.unlockCanvasAndPost(canvas)
-                }
+            biteArrayLV.safeSingleObserve(viewLifecycleOwner) { biteArray ->
+                binding?.imageView?.load(biteArray)
             }
         }
     }
 
     private fun SurfaceView.initVideoDecoder(isYuvFormat: Boolean) {
-        showMessage("initVideoDecoder videoDecoder $videoDecoder isYuvFormat $isYuvFormat viewModel.yuvDataListener ${viewModel.yuvDataListener}")
         videoDecoder?.let {
             videoDecoder?.onPause()
             videoDecoder?.destroy()
@@ -117,6 +109,8 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
             width,
             height
         )
+        binding?.imageView?.isVisible = isYuvFormat
+        binding?.overlay?.isVisible = isYuvFormat
         if (isYuvFormat) {
             viewModel.initYuvDataListener()?.apply {
                 videoDecoder?.addYuvDataListener(this)
