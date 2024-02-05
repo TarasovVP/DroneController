@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1046421009780",
+    "project_id": "drone-controller-6aadc",
+    "storage_bucket": "drone-controller-6aadc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1046421009780:android:5d4c1ab6fcb349115d6821",
+        "android_client_info": {
+          "package_name": "com.vnteam.dronecontroller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHAIvaW3jqwWtvQwJ2q39TtmQMf6BI8Rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

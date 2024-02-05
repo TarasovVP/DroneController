@@ -3,6 +3,9 @@ package com.vnteam.dronecontroller.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.SystemClock
 import android.util.Log
 import com.vnteam.dronecontroller.camera.ObjectDetection
@@ -13,6 +16,7 @@ import org.tensorflow.lite.support.image.ops.Rot90Op
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
+import java.io.ByteArrayOutputStream
 
 class ObjectDetectorHelper(
   var threshold: Float = 0.5f,
@@ -35,6 +39,7 @@ class ObjectDetectorHelper(
     fun clearObjectDetector() {
         objectDetectorListener?.onResults(
             ObjectDetection(
+                null,
                 mutableListOf(),
                 0L,
                 0,
@@ -117,12 +122,47 @@ class ObjectDetectorHelper(
 
         val results = objectDetector?.detect(tensorImage)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
-        objectDetectorListener?.onResults(
-            ObjectDetection(
-            results,
-            inferenceTime,
-            tensorImage.height,
-            tensorImage.width))
+        if (results.isNullOrEmpty().not()) {
+            objectDetectorListener?.onResults(
+                ObjectDetection(
+                    byteArray.byteArrayWithDetections(results),
+                    results,
+                    inferenceTime,
+                    tensorImage.height,
+                    tensorImage.width))
+        }
+    }
+
+    private fun ByteArray.byteArrayWithDetections(objectDetections: List<Detection>?): ByteArray {
+        val bitmap = BitmapFactory.decodeByteArray(this, 0, this.size)
+        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        val canvas = Canvas(mutableBitmap)
+
+        val paint = Paint().apply {
+            color = Color.RED
+            style = Paint.Style.STROKE
+            strokeWidth = 5f
+        }
+
+        val paintText = Paint().apply {
+            color = Color.WHITE
+            textSize = 40f
+        }
+
+        objectDetections?.forEach { detection ->
+            val boundingBox = detection.boundingBox
+            canvas.drawRect(boundingBox, paint)
+
+            val text = detection.categories.firstOrNull()?.label ?: "Unknown"
+            val textX = detection.boundingBox.left
+            val textY = detection.boundingBox.top - 10
+            canvas.drawText(text, textX, textY, paintText)
+        }
+
+        val stream = ByteArrayOutputStream()
+        mutableBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
     }
 
     interface DetectorListener {

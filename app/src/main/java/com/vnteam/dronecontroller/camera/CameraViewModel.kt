@@ -1,11 +1,11 @@
 package com.vnteam.dronecontroller.camera
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.YuvImage
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.storage.FirebaseStorage
+import com.vnteam.dronecontroller.DroneControllerApp
 import com.vnteam.dronecontroller.base.BaseViewModel
 import com.vnteam.dronecontroller.utils.ObjectDetectorHelper
 import dji.sdk.keyvalue.key.CameraKey
@@ -31,7 +31,7 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
     private var videoChannelStateListener: VideoChannelStateChangeListener? = null
     private var curChannelType: VideoChannelType? = null
     private var fcHasInit = false
-    var objectDetectorHelper: ObjectDetectorHelper? = null
+    private var objectDetectorHelper: ObjectDetectorHelper? = null
     var objectDetectionLV = MutableLiveData<ObjectDetection>()
     var biteArrayLV = MutableLiveData<ByteArray>()
     var yuvDataListener: YuvDataListener? = null
@@ -159,6 +159,25 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
                 }
 
                 override fun onResults(objectDetection: ObjectDetection) {
+                    exceptionLiveData. postValue("Object detected categories ${objectDetection.results?.map { it.categories }} " +
+                            "boundingBox ${objectDetection.results?.map { it.boundingBox }} ")
+                    DroneControllerApp.instance?.logCustomEvent(
+                        "Object detection",
+                        "Object detected objectDetection $objectDetection"
+                    )
+                    val storage = FirebaseStorage.getInstance()
+                    val storageRef =
+                        storage.reference.child("images/${System.currentTimeMillis()}.jpg")
+
+                    val uploadTask = objectDetection.sourceImage?.let { storageRef.putBytes(it) }
+                    uploadTask?.addOnSuccessListener {
+                        DroneControllerApp.instance?.logCustomEvent(
+                            "Object detection",
+                            "Object saved successfully to storage"
+                        )
+                    }?.addOnFailureListener {
+                        exceptionLiveData.postValue(it.localizedMessage)
+                    }
                     objectDetectionLV.postValue(objectDetection)
                 }
 
@@ -169,7 +188,7 @@ class CameraViewModel(private val application: Application) : BaseViewModel(appl
     fun initYuvDataListener(): YuvDataListener? {
         yuvDataListener = yuvDataListener ?: YuvDataListener { _, data, width, height ->
             launch {
-                if (++count == 10) {
+                if (++count == 50) {
                     count = 0
                     val yuvImage = YuvImage(data, ImageFormat.NV21, width, height, null)
                     val out = ByteArrayOutputStream()

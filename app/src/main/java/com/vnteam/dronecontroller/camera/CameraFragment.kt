@@ -96,6 +96,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding, CameraViewModel>() {
     }
 
     private fun SurfaceView.initVideoDecoder(isYuvFormat: Boolean) {
+        showMessage("initVideoDecoder videoDecoder $videoDecoder isYuvFormat $isYuvFormat viewModel.yuvDataListener ${viewModel.yuvDataListener}")
         videoDecoder?.let {
             videoDecoder?.onPause()
             videoDecoder?.destroy()
