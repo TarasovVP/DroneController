@@ -36,7 +36,6 @@
         <Button
             android:id="@+id/btn_start"
             style="@style/common_button"
-            android:layout_below="@+id/tvTitle"
             android:layout_marginTop="16dp"
             android:text="Start"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,12 +69,21 @@
         <Button
             android:id="@+id/btn_camera"
             style="@style/common_button"
-            android:layout_below="@+id/tvTitle"
             android:layout_marginTop="16dp"
             android:enabled="false"
             android:text="Go to Camera"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_gimbal"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_register_state_info" />
+
+        <Button
+            android:id="@+id/btn_gimbal"
+            style="@style/common_button"
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:text="Go to Gimbal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_camera"
             app:layout_constraintTop_toBottomOf="@+id/tv_register_state_info" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

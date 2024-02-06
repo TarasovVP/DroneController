@@ -35,11 +35,15 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
         binding?.btnCamera?.setOnClickListener {
             findNavController().navigate(MainFragmentDirections.startCameraFragment())
         }
+        binding?.btnGimbal?.setOnClickListener {
+            findNavController().navigate(MainFragmentDirections.startGimbalFragment())
+        }
     }
 
     private fun notifyStatusChange(registerStatus: String, productName: String) {
         binding?.tvRegisterStateInfo?.text = registerStatus
         binding?.btnCamera?.isEnabled = registerStatus == "Product Connected"
+        binding?.btnGimbal?.isEnabled = registerStatus == "Product Connected"
         binding?.textProductInfo?.text = productName
     }
 

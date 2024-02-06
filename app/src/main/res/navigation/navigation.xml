@@ -19,6 +19,9 @@
         <action
             android:id="@+id/startVideoChannelFragment"
             app:destination="@id/videoChannelFragment" />
+        <action
+            android:id="@+id/startGimbalFragment"
+            app:destination="@id/gimbalFragment" />
     </fragment>
 
     <fragment
@@ -36,4 +39,8 @@
     <fragment
         android:id="@+id/videoChannelFragment"
         android:name="com.vnteam.dronecontroller.video.VideoChannelFragment"/>
+
+    <fragment
+        android:id="@+id/gimbalFragment"
+        android:name="com.vnteam.dronecontroller.gimbal.GimbalFragment"/>
 </navigation>
