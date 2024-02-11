@@ -15,5 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Drone Controller"
 include(":app")
-include(":android-sdk-v5-uxsdk")
  
