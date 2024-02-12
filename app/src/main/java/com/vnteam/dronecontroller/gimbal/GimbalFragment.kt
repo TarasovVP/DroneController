@@ -34,16 +34,16 @@ class GimbalFragment : BaseFragment<FragmentGimbalBinding, GimbalViewModel>() {
             setAttitudeListener()
         }
         binding?.top?.setOnClickListener {
-            rotateGimbalBySpeed(5.0, 0.0)
+            rotateGimbalBySpeed(10.0, 0.0)
         }
         binding?.bottom?.setOnClickListener {
-            rotateGimbalBySpeed(-5.0, 0.0)
+            rotateGimbalBySpeed(-10.0, 0.0)
         }
         binding?.left?.setOnClickListener {
-            rotateGimbalBySpeed(0.0, -5.0)
+            rotateGimbalBySpeed(0.0, -10.0)
         }
         binding?.right?.setOnClickListener {
-            rotateGimbalBySpeed(0.0, 5.0)
+            rotateGimbalBySpeed(0.0, 10.0)
         }
         binding?.stop?.setOnClickListener {
             rotateGimbalBySpeed(0.0, 0.0)
@@ -64,24 +64,17 @@ class GimbalFragment : BaseFragment<FragmentGimbalBinding, GimbalViewModel>() {
         }
     }
 
-    fun rotateGimbalBySpeed(pitch: Double, yaw: Double) {
-        val expectedPitch = pitch + (gimbal?.pitch ?: 0.0)
-        val rangedPitch = if (expectedPitch > (gimbalAttitudeRange?.pitch?.max ?: 0.0)) {
-            (gimbalAttitudeRange?.pitch?.max ?: 0.0) - (gimbal?.pitch ?: 0.0) - 1
-        } else if (expectedPitch < (gimbalAttitudeRange?.pitch?.min ?: 0.0)) {
-            (gimbalAttitudeRange?.pitch?.min ?: 0.0) - (gimbal?.pitch ?: 0.0) + 1
-        } else {
-            pitch
+    private fun rotateGimbalBySpeed(pitch: Double, yaw: Double) {
+        val gimbalPitch = gimbal?.pitch ?: 0.0
+        var rangedPitch = 0.00
+        gimbalAttitudeRange?.pitch?.apply {
+            rangedPitch = when {
+                pitch + gimbalPitch > max -> max - gimbalPitch - 1
+                pitch + gimbalPitch < min -> min - gimbalPitch + 1
+                else -> pitch
+            }
         }
-        val expectedYaw = yaw + (gimbal?.yaw ?: 0.0)
-        val rangedYaw = if (expectedYaw > (gimbalAttitudeRange?.yaw?.max ?: 0.0)) {
-            0.0
-        } else if (expectedYaw < (gimbalAttitudeRange?.yaw?.min ?: 0.0)) {
-            0.0
-        } else {
-            yaw
-        }
-        showMessage("Gimbal rotate by speed gimbal?.pitch ${gimbal?.pitch} rangedPitch $rangedPitch gimbal?.yaw ${gimbal?.yaw} rangedYaw $rangedYaw")
+        showMessage("Gimbal rotate by speed gimbal?.pitch $gimbalPitch rangedPitch $rangedPitch gimbal?.yaw ${gimbal?.yaw}")
         KeyManager.getInstance()
             .performAction(
                 KeyTools.createKey(GimbalKey.KeyRotateBySpeed, 0),

@@ -22,6 +22,12 @@
         <action
             android:id="@+id/startGimbalFragment"
             app:destination="@id/gimbalFragment" />
+        <action
+            android:id="@+id/startFlightControllerFragment"
+            app:destination="@id/flightControllerFragment" />
+        <action
+            android:id="@+id/startMapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
 
     <fragment
@@ -43,4 +49,12 @@
     <fragment
         android:id="@+id/gimbalFragment"
         android:name="com.vnteam.dronecontroller.gimbal.GimbalFragment"/>
+
+    <fragment
+        android:id="@+id/flightControllerFragment"
+        android:name="com.vnteam.dronecontroller.flight_control.FlightControlFragment"/>
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.vnteam.dronecontroller.map.MapFragment"/>
 </navigation>

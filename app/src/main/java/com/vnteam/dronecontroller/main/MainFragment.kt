@@ -38,6 +38,12 @@ class MainFragment : BaseFragment<FragmentMainBinding, MainViewModel>() {
         binding?.btnGimbal?.setOnClickListener {
             findNavController().navigate(MainFragmentDirections.startGimbalFragment())
         }
+        binding?.btnGimbal?.setOnClickListener {
+            findNavController().navigate(MainFragmentDirections.startGimbalFragment())
+        }
+        binding?.btnGimbal?.setOnClickListener {
+            findNavController().navigate(MainFragmentDirections.startGimbalFragment())
+        }
     }
 
     private fun notifyStatusChange(registerStatus: String, productName: String) {
