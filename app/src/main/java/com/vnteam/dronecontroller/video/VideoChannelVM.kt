@@ -74,7 +74,6 @@ class VideoChannelVM(channelType: VideoChannelType) : ViewModel() {
     private fun addConnectionListener() {
         FlightControllerKey.KeyConnection.create().listen(this) {
             it?.let {
-                //飞机重启的时候更新一下所持有的channel
                 if (it and fcHasInit) {
                     curChannelType?.let { it1 ->
                         MediaDataCenter.getInstance().videoStreamManager.getAvailableVideoChannel(
